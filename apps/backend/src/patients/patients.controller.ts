@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { CreatePatientDto } from "./dto/create-patient.dto";
 import { PatientsService } from "./patients.service";
-import { Patient } from "./interfaces/patient.interface";
+import { Patient } from "@prisma/client";
 
 @Controller("patients")
 export class PateintsController {
@@ -18,8 +18,8 @@ export class PateintsController {
 
   @Post()
   @HttpCode(201)
-  async create(@Body() createPatientDto: CreatePatientDto) {
-    this.patientService.createPatient(createPatientDto);
+  async create(@Body() createPatientDto: CreatePatientDto): Promise<Patient> {
+    return this.patientService.createPatient(createPatientDto);
   }
 
   @Get()
@@ -33,7 +33,7 @@ export class PateintsController {
     @Param("id") id: string,
     @Body() patientData: Partial<Patient>
   ): Promise<Patient> {
-    return await this.patientService.updatePatientById({
+    return this.patientService.updatePatientById({
       where: { id: Number(id) },
       data: patientData,
     });
@@ -41,7 +41,7 @@ export class PateintsController {
 
   @Delete(":id")
   async deletePatient(@Param("id") id: String): Promise<{ id: Number }> {
-    return await this.patientService.deletePatientById({
+    return this.patientService.deletePatientById({
       where: {
         id: Number(id),
       },
