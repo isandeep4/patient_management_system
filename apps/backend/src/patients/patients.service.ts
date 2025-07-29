@@ -8,13 +8,13 @@ export class PatientsService {
   constructor(private prisma: PrismaService) {}
 
   async createPatient(data: Prisma.PatientCreateInput): Promise<Patient> {
-    return this.prisma.patient.create({
+    return await this.prisma.patient.create({
       data,
     });
   }
 
-  async fetchAllPatients() {
-    return this.prisma.patient.findMany();
+  async fetchAllPatients(): Promise<Patient[]> {
+    return await this.prisma.patient.findMany();
   }
 
   async updatePatientById(params: {

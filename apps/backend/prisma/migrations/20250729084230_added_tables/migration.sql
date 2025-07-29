@@ -10,5 +10,15 @@ CREATE TABLE "Patient" (
     CONSTRAINT "Patient_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "User" (
+    "userId" TEXT NOT NULL,
+    "userName" TEXT NOT NULL,
+    "password" TEXT NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Patient_email_key" ON "Patient"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_userId_key" ON "User"("userId");
