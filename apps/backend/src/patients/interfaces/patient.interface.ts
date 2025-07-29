@@ -4,5 +4,5 @@ export interface Patient {
   lastName: string;
   email: string;
   phoneNumber: string;
-  dob: string;
+  dob: Date;
 }

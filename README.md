@@ -1,4 +1,5 @@
 # patient_management_system
+
 - **[BE] Feature Added:** Create and fetch patient records
 - **Details:**
   - Created `patients` module directory containing controllers, services, and DTOs
@@ -7,3 +8,18 @@
     - `create` — Adds a new patient to the temporary patients array
     - `fetchAll` — Retrieves all patients
   - Added `CreatePatientDto` for input validation
+- **[BE] Feature Added:** Prisma DB integration
+- **Details:**
+  - setup prisma data source and defined Patient model in schema.prisma file
+  - configured DATABASE_URL in the .env file to point to the postgres db server
+  - created configModule to load the database url for use in the prisma datasource cpnfig
+  - created PrismaService that instantiate Prisma client and manages database connection
+  - Implemented Patient services to perform database operations on the Patient model using PrismaSrvice
+- **[BE] Feature Added:** Implemented JWT based authentication and authorization
+- **Details:**
+  - implemented users service to store and read users from prisma db
+  - Developed an Auth service with a signin method that uses jwt and a secret key to issue bearer tokena after authenticating users
+  - Applied global AuthGuard on protected routes that validate JWT tokens extracted from subsequent request headers.
+  - declared public (unauthenticated) routes using a custom decorator with SetMetadata and checked via Reflector
+  - Assigned Admin and User roles the route handlers to access specific resources using @Roles() decorator
+  - Developed Roles guard to compare current user roles to the actual roles required by the current route handler

@@ -1,15 +1,37 @@
+// import { Patient } from "src/patients/interfaces/patient.interface";
 import { Injectable } from "@nestjs/common";
-import { Patient } from "src/patients/interfaces/patient.interface";
+import { Patient, Prisma } from "@prisma/client";
+import { PrismaService } from "src/prisma.service";
 
 @Injectable()
 export class PatientsService {
-  private readonly patients: Patient[] = [];
+  constructor(private prisma: PrismaService) {}
 
-  create(patient: Patient) {
-    this.patients.push(patient);
+  async createPatient(data: Prisma.PatientCreateInput): Promise<Patient> {
+    return await this.prisma.patient.create({
+      data,
+    });
   }
 
-  findAll() {
-    return this.patients;
+  async fetchAllPatients(): Promise<Patient[]> {
+    return await this.prisma.patient.findMany();
+  }
+
+  async updatePatientById(params: {
+    where: Prisma.PatientWhereUniqueInput;
+    data: Prisma.PatientUpdateInput;
+  }): Promise<Patient> {
+    const { where, data } = params;
+    return await this.prisma.patient.update({
+      where,
+      data,
+    });
+  }
+  async deletePatientById(params: {
+    where: Prisma.PatientWhereUniqueInput;
+  }): Promise<{ id: number }> {
+    return await this.prisma.patient.delete({
+      where: params.where,
+    });
   }
 }
