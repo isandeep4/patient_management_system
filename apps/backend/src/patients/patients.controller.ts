@@ -11,6 +11,8 @@ import {
 import { CreatePatientDto } from "./dto/create-patient.dto";
 import { PatientsService } from "./patients.service";
 import { Patient } from "@prisma/client";
+import { Roles } from "src/auth/decorators/roles.decorator";
+import { Role } from "src/enums/roles.enum";
 
 @Controller("patients")
 export class PateintsController {
@@ -18,6 +20,7 @@ export class PateintsController {
 
   @Post()
   @HttpCode(201)
+  @Roles(Role.Admin)
   async create(@Body() createPatientDto: CreatePatientDto): Promise<Patient> {
     return this.patientService.createPatient(createPatientDto);
   }
@@ -29,6 +32,7 @@ export class PateintsController {
   }
 
   @Put(":id")
+  @Roles(Role.Admin)
   async editPatient(
     @Param("id") id: string,
     @Body() patientData: Partial<Patient>
@@ -40,6 +44,7 @@ export class PateintsController {
   }
 
   @Delete(":id")
+  @Roles(Role.Admin)
   async deletePatient(@Param("id") id: String): Promise<{ id: Number }> {
     return this.patientService.deletePatientById({
       where: {

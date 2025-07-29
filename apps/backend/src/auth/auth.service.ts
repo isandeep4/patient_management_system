@@ -14,7 +14,7 @@ export class AuthService {
     if (user?.password !== password) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.userId, password: user.userName };
+    const payload = { sub: user.userId, roles: user.roles };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

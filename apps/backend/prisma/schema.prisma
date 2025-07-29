@@ -20,4 +20,5 @@ model User {
   userId   String    @unique
   userName String
   password String
+  roles  String[]
 }
