@@ -23,7 +23,11 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+    const accessToken = request.cookies["accessToken"];
+    if (!accessToken) {
+      throw new Error("missing token");
+    }
+    const token = accessToken || this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException();
     }
