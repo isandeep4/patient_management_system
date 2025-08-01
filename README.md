@@ -33,4 +33,5 @@
 - **Details:**:
   - Authenticated User and admin lands on the dashboard page
   - Authenticated Admin can add, edit, delete, and view patients on this dashboard page
-  - Used tailwind sidebar css to desing the dashboard page giving a nice user experience
+  - Used tailwind css to desing the login, signup, dashboard page and profile page giving a nice user experience
+  - Allow access to edit, delete, and add action based on roles

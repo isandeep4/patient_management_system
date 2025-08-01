@@ -19,8 +19,12 @@ export const initialPatient: Patient = {
   phoneNumber: "",
   dob: "",
 };
+enum Roles {
+  Admin = "Admin",
+  User = "User",
+}
 
-export default function PatientsListPage() {
+export default function PatientsListPage({ roles }: { roles: string[] }) {
   const [patients, setPatients] = useState<Patient[] | []>([]);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
     initialPatient
@@ -90,12 +94,14 @@ export default function PatientsListPage() {
     <main>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold">Patients</h1>
-        <button
-          onClick={handleAddPatient}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          Add Patient
-        </button>
+        {roles.includes(Roles.Admin) && (
+          <button
+            onClick={handleAddPatient}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Add Patient
+          </button>
+        )}
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -113,9 +119,11 @@ export default function PatientsListPage() {
               <th scope="col" className="px-6 py-3">
                 Phone number
               </th>
-              <th scope="col" className="px-6 py-3">
-                Action
-              </th>
+              {roles.includes(Roles.Admin) && (
+                <th scope="col" className="px-6 py-3">
+                  Action
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -134,23 +142,25 @@ export default function PatientsListPage() {
                   <td className="px-6 py-4">{patient.email}</td>
                   <td className="px-6 py-4">{patient.dob}</td>
                   <td className="px-6 py-4">{patient.phoneNumber}</td>
-                  <td className="px-6 py-4">
-                    <a
-                      href="#"
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline pr-1"
-                      onClick={() => openModal(patient)}
-                    >
-                      Edit
-                    </a>
-                    |
-                    <a
-                      href="#"
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline pl-1"
-                      onClick={() => deleteRow(patient)}
-                    >
-                      delete
-                    </a>
-                  </td>
+                  {roles.includes(Roles.Admin) && (
+                    <td className="px-6 py-4">
+                      <a
+                        href="#"
+                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline pr-1"
+                        onClick={() => openModal(patient)}
+                      >
+                        Edit
+                      </a>
+                      |
+                      <a
+                        href="#"
+                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline pl-1"
+                        onClick={() => deleteRow(patient)}
+                      >
+                        delete
+                      </a>
+                    </td>
+                  )}
                 </tr>
               ))}
           </tbody>

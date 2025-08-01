@@ -1,7 +1,12 @@
 import router from "next/router";
-import { FormState, SignupFormSchema } from "../lib/definitions";
+import {
+  SignupFormState,
+  SignupFormSchema,
+  SigninFormState,
+  SigninFormSchema,
+} from "../lib/definitions";
 
-export async function signup(state: FormState, formData: FormData) {
+export async function signup(state: SignupFormState, formData: FormData) {
   const rawRoles = formData.getAll("roles"); // returns an array of all checked values
 
   const formRoles = rawRoles.filter((value) =>
@@ -24,10 +29,11 @@ export async function signup(state: FormState, formData: FormData) {
 
   // Call the create user API
   try {
-    const response = await fetch("http://localhost:4000/users", {
+    const response = await fetch("http://localhost:4000/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, userName, password, roles }),
+      credentials: "include",
     });
     if (response.ok) {
       const userData = await response.json();
@@ -41,6 +47,39 @@ export async function signup(state: FormState, formData: FormData) {
     return {
       success: false,
       user: [],
+    };
+  }
+}
+
+export async function login(state: SigninFormState, formData: FormData) {
+  // Validate form fields
+  const validatedFields = SigninFormSchema.safeParse({
+    userId: formData.get("email"),
+    password: formData.get("password"),
+  });
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+  const { userId, password } = validatedFields.data;
+
+  const response = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, password }),
+  });
+
+  if (response.status === 200) {
+    const { user } = await response.json();
+    return {
+      success: true,
+      user: user,
+    };
+  } else {
+    return {
+      success: false,
+      messages: "You don't have an account.",
     };
   }
 }

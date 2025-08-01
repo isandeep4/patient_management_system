@@ -1,10 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
 import PatientsListPage from "../components/patientListPage";
 
+import Link from "next/link";
+import { useUser } from "../contextApi/userContext";
+
 export default function Dashboard() {
-  useEffect(() => {}, []);
+  const { user } = useUser();
+  const handleLogout = async () => {
+    await fetch("http://localhost:4000/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+  };
+
   return (
     <>
       {/* Sidebar */}
@@ -15,35 +24,36 @@ export default function Dashboard() {
       >
         <ul className="space-y-2 font-medium">
           <li>
-            <a
-              href="#"
+            <Link
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              href="/dashboard"
             >
-              <span className="ms-3">Dashboard</span>
-            </a>
+              Dashboard
+            </Link>
           </li>
           <li>
-            <a
-              href="#"
+            <Link
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              href="/profile"
             >
-              <span className="flex-1 ms-3 whitespace-nowrap">Profile</span>
-            </a>
+              Profile
+            </Link>
           </li>
           <li>
-            <a
-              href="#"
+            <Link
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              onClick={handleLogout}
+              href={"/login"}
             >
-              <span className="flex-1 ms-3 whitespace-nowrap">Sign Out</span>
-            </a>
+              Sign Out
+            </Link>
           </li>
         </ul>
       </aside>
 
       {/* Main content */}
       <div className="p-4 sm:ml-64">
-        <PatientsListPage />
+        <PatientsListPage roles={user!.roles} />
       </div>
     </>
   );

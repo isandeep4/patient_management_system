@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <UserProvider>{children}</UserProvider>;
+        <UserProvider>{children}</UserProvider>
       </body>
     </html>
   );
