@@ -23,3 +23,9 @@
   - declared public (unauthenticated) routes using a custom decorator with SetMetadata and checked via Reflector
   - Assigned Admin and User roles the route handlers to access specific resources using @Roles() decorator
   - Developed Roles guard to compare current user roles to the actual roles required by the current route handler
+- **[FE] Feature Added:** Implemented signup and login page
+- **Details:**:
+  - Developed signup and login page with form validation
+  - Integrated backend API on submit form to create user or verifying user credentials
+  - saved JWT token in an HTTP-only cookie upon successful login
+  - Automatically sent this cookie with subsequent requests to autheticate user resources
