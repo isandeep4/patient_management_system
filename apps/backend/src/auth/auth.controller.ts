@@ -21,7 +21,7 @@ export class AuthController {
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) res: Response
   ) {
-    const { access_token } = await this.authService.signin(
+    const { access_token, userDetails } = await this.authService.signin(
       signInDto.userId,
       signInDto.password
     );
@@ -33,6 +33,6 @@ export class AuthController {
       path: "/",
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     });
-    return { message: "logged in" };
+    return { message: "logged in", user: userDetails };
   }
 }
