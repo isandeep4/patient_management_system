@@ -1,5 +1,15 @@
 # patient_management_system
 
+**Installation and Setup**:
+
+- Please make sure that you have node.js installed otherwise install from here https://nodejs.org/
+- Clone the Repo to your local machine
+- Navigate to the apps/frontend folder to run the front end app
+- Run npm install/ yarn install to install all dependencies listed in package.json file
+- Create a .env.local file in the app/frontend folder and add this variable NEXT_PUBLIC_API_BASE_URL=http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com
+- run "npm run dev" to start the Next.js development
+- this will launch the app in development mode at http://localhost:3000
+
 - **[BE] Feature Added:** Create and fetch patient records
 - **Details:**
   - Created `patients` module directory containing controllers, services, and DTOs
