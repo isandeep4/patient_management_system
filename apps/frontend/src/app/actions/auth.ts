@@ -5,6 +5,8 @@ import {
   SigninFormSchema,
 } from "../lib/definitions";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export async function signup(state: SignupFormState, formData: FormData) {
   const rawRoles = formData.getAll("roles"); // returns an array of all checked values
 
@@ -28,15 +30,11 @@ export async function signup(state: SignupFormState, formData: FormData) {
 
   // Call the create user API
   try {
-    const response = await fetch(
-      "http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/auth/signup",
-      //"http://localhost:4000/auth/signup",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, userName, password, roles }),
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, userName, password, roles }),
+    });
     if (response.ok) {
       const userData = await response.json();
       localStorage.setItem("accessToken", userData.accessToken);

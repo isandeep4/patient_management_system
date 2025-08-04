@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "../contextApi/userContext";
+import { useUser } from "../../contextApi/userContext";
 
 export default function Profile() {
   const { user } = useUser();

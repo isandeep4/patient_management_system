@@ -19,18 +19,40 @@ export const initialPatient: Patient = {
   phoneNumber: "",
   dob: "",
 };
-enum Roles {
-  Admin = "admin",
-  User = "user",
-}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function PatientsListPage({ roles }: { roles: string[] }) {
   const [patients, setPatients] = useState<Patient[] | []>([]);
-  const token = localStorage.getItem("accessToken");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
     initialPatient
   );
   const [modalOpen, setModalOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const isAdmin = roles.includes("admin");
+
+  useEffect(() => {
+    setToken(localStorage.getItem("accessToken"));
+  }, []);
+
+  useEffect(() => {
+    if (token) fetchPatients();
+  }, [token]);
+
+  const fetchPatients = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/patients`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setPatients(data);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    }
+  };
 
   function openModal(patient: Patient) {
     setSelectedPatient(patient);
@@ -42,80 +64,52 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
     setSelectedPatient(initialPatient);
   }
 
-  function handleSave(updatedData: PatientFormData) {
-    if (selectedPatient) {
-      fetch(
-        `http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/patients/${
-          selectedPatient!.id
-        }`,
-        {
-          // credentials: "include",
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(updatedData),
-        }
-      );
-    } else {
-      fetch(
-        `http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/patients`,
-        {
-          // credentials: "include",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(updatedData),
-        }
-      );
+  const handleSave = async (updatedData: PatientFormData) => {
+    const method = selectedPatient ? "PUT" : "POST";
+    const url = selectedPatient
+      ? `${API_BASE_URL}/patients/${selectedPatient.id}`
+      : `${API_BASE_URL}/patients`;
+    try {
+      await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+      closeModal();
+      fetchPatients(); // Refresh list after save
+    } catch (error) {
+      console.error("Error saving patient:", error);
     }
 
     closeModal();
-  }
-
-  useEffect(() => {
-    fetch(
-      "http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/patients",
-      //"http://localhost:4000/patients",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        // credentials: "include", // Send cookies with cross-origin request
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => setPatients(data))
-      .catch(console.error);
-  }, [modalOpen]);
-
+  };
   async function handleAddPatient() {
     setSelectedPatient(null);
     setModalOpen(true);
   }
-  const deleteRow = (patient: Patient) => {
-    fetch(
-      `http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/patients/${patient.id}`,
-      {
-        // credentials: "include",
+  const handleDelete = async (patient: Patient) => {
+    try {
+      await fetch(`${API_BASE_URL}/patients/${patient.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
+      });
+      fetchPatients();
+    } catch (error) {
+      console.error("Error deleting patient:", error);
+    }
   };
 
   return (
     <main>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold">Patients</h1>
-        {roles.includes(Roles.Admin) && (
+        {isAdmin && (
           <button
             onClick={handleAddPatient}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
@@ -140,7 +134,7 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
               <th scope="col" className="px-6 py-3">
                 Phone number
               </th>
-              {roles.includes(Roles.Admin) && (
+              {isAdmin && (
                 <th scope="col" className="px-6 py-3">
                   Action
                 </th>
@@ -163,7 +157,7 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
                   <td className="px-6 py-4">{patient.email}</td>
                   <td className="px-6 py-4">{patient.dob}</td>
                   <td className="px-6 py-4">{patient.phoneNumber}</td>
-                  {roles.includes(Roles.Admin) && (
+                  {isAdmin && (
                     <td className="px-6 py-4">
                       <a
                         href="#"
@@ -176,7 +170,7 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
                       <a
                         href="#"
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline pl-1"
-                        onClick={() => deleteRow(patient)}
+                        onClick={() => handleDelete(patient)}
                       >
                         delete
                       </a>
