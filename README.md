@@ -2,13 +2,15 @@
 
 **Installation and Setup**:
 
-- Please make sure that you have node.js installed otherwise install from here https://nodejs.org/
+- Please make sure that you have Node.js installed otherwise, install it from here https://nodejs.org/
 - Clone the Repo to your local machine
-- Navigate to the apps/frontend folder to run the front end app
+- Navigate to the apps/frontend folder to run the front-end app
 - Run npm install/ yarn install to install all dependencies listed in package.json file
 - Create a .env.local file in the app/frontend folder and add this variable NEXT_PUBLIC_API_BASE_URL=http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com
-- run "npm run dev" to start the Next.js development
-- this will launch the app in development mode at http://localhost:3000
+- Run "npm run dev" to start the Next.js development
+- This will launch the app in development mode at http://localhost:3000, where you should see the login screen.
+- Click the sign-up button to create a new user. Remember the email ID and password for logging in.
+- You will be navigated to the dashboard page after successful login/signup.
 
 - **[BE] Feature Added:** Create and fetch patient records
 - **Details:**
