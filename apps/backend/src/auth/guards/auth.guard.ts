@@ -6,8 +6,6 @@ import {
 } from "@nestjs/common";
 import { Request } from "express";
 import { JwtService } from "@nestjs/jwt";
-import { Observable } from "rxjs";
-import { jwtConstants } from "../constants";
 import { Reflector } from "@nestjs/core";
 import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
 
@@ -23,17 +21,17 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const accessToken = request.cookies["accessToken"];
-    if (!accessToken) {
-      throw new Error("missing token");
-    }
-    const token = accessToken || this.extractTokenFromHeader(request);
+    // const accessToken = request.cookies["accessToken"];
+    // if (!accessToken) {
+    //   throw new Error("missing token");
+    // }
+    const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException();
     }
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
+        secret: process.env.JWT_SECRET,
       });
       request["user"] = payload;
     } catch {
@@ -42,6 +40,8 @@ export class AuthGuard implements CanActivate {
     return true;
   }
   private extractTokenFromHeader(request: Request): string | undefined {
+    const authHeader = request.headers.authorization;
+    if (!authHeader) return undefined;
     const [type, token] = request.headers.authorization?.split(" ") ?? [];
     return type === "Bearer" ? token : undefined;
   }

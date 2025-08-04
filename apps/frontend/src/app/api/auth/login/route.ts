@@ -3,11 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const { userId, password } = await request.json();
-    const response = await fetch("http://localhost:4000/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, password }),
-    });
+    const response = await fetch(
+      "http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/auth/login",
+      //"http://localhost:4000/auth/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, password }),
+      }
+    );
     const data = await response.json();
     if (!response.ok) {
       return new NextResponse(JSON.stringify(data), {
@@ -15,17 +19,12 @@ export async function POST(request: NextRequest) {
         headers: { "Content-Type": "application/json" },
       });
     }
-    const headers = new Headers();
-    const setCookie = response.headers.get("set-cookie");
-    if (setCookie) {
-      headers.append("set-cookie", setCookie);
-    }
-
     return new NextResponse(JSON.stringify(data), {
       status: 200,
-      headers,
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.error("Error while logging in:", error); // <-- Log actual error
     return new NextResponse(
       JSON.stringify({ error: "Internal Server Error" }),
       {

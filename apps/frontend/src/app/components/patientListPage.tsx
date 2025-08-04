@@ -20,12 +20,13 @@ export const initialPatient: Patient = {
   dob: "",
 };
 enum Roles {
-  Admin = "Admin",
-  User = "User",
+  Admin = "admin",
+  User = "user",
 }
 
 export default function PatientsListPage({ roles }: { roles: string[] }) {
   const [patients, setPatients] = useState<Patient[] | []>([]);
+  const token = localStorage.getItem("accessToken");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
     initialPatient
   );
@@ -43,51 +44,71 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
 
   function handleSave(updatedData: PatientFormData) {
     if (selectedPatient) {
-      console.log("Save updated user data", updatedData);
-      // TODO: call API or update state here
-      fetch(`http://localhost:4000/patients/${selectedPatient!.id}`, {
-        credentials: "include",
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      });
+      fetch(
+        `http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/patients/${
+          selectedPatient!.id
+        }`,
+        {
+          // credentials: "include",
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
     } else {
-      fetch(`http://localhost:4000/patients`, {
-        credentials: "include",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      });
+      fetch(
+        `http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/patients`,
+        {
+          // credentials: "include",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
     }
 
     closeModal();
   }
 
   useEffect(() => {
-    fetch("http://localhost:4000/patients", {
-      credentials: "include", // Send cookies with cross-origin request
-    })
+    fetch(
+      "http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/patients",
+      //"http://localhost:4000/patients",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        // credentials: "include", // Send cookies with cross-origin request
+      }
+    )
       .then((res) => res.json())
       .then((data) => setPatients(data))
       .catch(console.error);
-  }, []);
+  }, [modalOpen]);
 
   async function handleAddPatient() {
     setSelectedPatient(null);
     setModalOpen(true);
   }
   const deleteRow = (patient: Patient) => {
-    fetch(`http://localhost:4000/patients/${patient.id}`, {
-      credentials: "include",
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    fetch(
+      `http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/patients/${patient.id}`,
+      {
+        // credentials: "include",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
   };
 
   return (

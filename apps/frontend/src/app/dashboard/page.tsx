@@ -4,14 +4,15 @@ import PatientsListPage from "../components/patientListPage";
 
 import Link from "next/link";
 import { useUser } from "../contextApi/userContext";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const { user } = useUser();
+  const router = useRouter();
+
   const handleLogout = async () => {
-    await fetch("http://localhost:4000/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    localStorage.removeItem("accessToken");
+    router.push("/login");
   };
 
   return (
