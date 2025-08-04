@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export async function POST(request: NextRequest) {
   try {
     const { userId, password } = await request.json();
-    const response = await fetch("http://localhost:4000/auth/login", {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, password }),
@@ -15,17 +17,12 @@ export async function POST(request: NextRequest) {
         headers: { "Content-Type": "application/json" },
       });
     }
-    const headers = new Headers();
-    const setCookie = response.headers.get("set-cookie");
-    if (setCookie) {
-      headers.append("set-cookie", setCookie);
-    }
-
     return new NextResponse(JSON.stringify(data), {
       status: 200,
-      headers,
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.error("Error while logging in:", error); // <-- Log actual error
     return new NextResponse(
       JSON.stringify({ error: "Internal Server Error" }),
       {

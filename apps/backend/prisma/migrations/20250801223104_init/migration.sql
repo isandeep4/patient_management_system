@@ -14,7 +14,8 @@ CREATE TABLE "Patient" (
 CREATE TABLE "User" (
     "userId" TEXT NOT NULL,
     "userName" TEXT NOT NULL,
-    "password" TEXT NOT NULL
+    "password" TEXT NOT NULL,
+    "roles" TEXT[]
 );
 
 -- CreateIndex

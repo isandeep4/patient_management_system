@@ -22,7 +22,8 @@ export class PateintsController {
   @HttpCode(201)
   @Roles(Role.Admin)
   async create(@Body() createPatientDto: CreatePatientDto): Promise<Patient> {
-    return this.patientService.createPatient(createPatientDto);
+    const patient = await this.patientService.createPatient(createPatientDto);
+    return { ...patient };
   }
 
   @Get()
