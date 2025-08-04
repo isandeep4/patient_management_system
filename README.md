@@ -29,3 +29,9 @@
   - Integrated backend API on submit form to create user or verifying user credentials
   - saved JWT token in an HTTP-only cookie upon successful login
   - Automatically sent this cookie with subsequent requests to autheticate user resources
+- **[FE] Feature Added:** Implemented user dashboard page
+- **Details:**:
+  - Authenticated User and admin lands on the dashboard page
+  - Authenticated Admin can add, edit, delete, and view patients on this dashboard page
+  - Used tailwind css to desing the login, signup, dashboard page and profile page giving a nice user experience
+  - Allow access to edit, delete, and add action based on roles

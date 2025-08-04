@@ -5,7 +5,7 @@ export const SignupFormSchema = z.object({
     .string()
     .min(2, { message: "Name must be at least 2 characters long." })
     .trim(),
-  userId: z.string().email({ message: "Please enter a valid email." }).trim(),
+  userId: z.email({ message: "Please enter a valid email." }).trim(),
   password: z
     .string()
     .min(8, { message: "Be at least 8 characters long" })
@@ -15,12 +15,30 @@ export const SignupFormSchema = z.object({
       message: "Contain at least one special character.",
     })
     .trim(),
+  roles: z.array(z.enum(["user", "admin"])).optional(),
 });
 
-export type FormState =
+export type SignupFormState =
   | {
       errors?: {
         userName?: string[];
+        userId?: string[];
+        password?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const SigninFormSchema = z.object({
+  userId: z.email({ message: "Please enter a valid email." }).trim(),
+  password: z
+    .string({ message: "Please enter a valid password" })
+    .min(1, { message: "Password is required" }),
+});
+
+export type SigninFormState =
+  | {
+      errors?: {
         userId?: string[];
         password?: string[];
       };
