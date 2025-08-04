@@ -31,7 +31,24 @@
   - Automatically sent this cookie with subsequent requests to autheticate user resources
 - **[FE] Feature Added:** Implemented user dashboard page
 - **Details:**:
+
   - Authenticated User and admin lands on the dashboard page
   - Authenticated Admin can add, edit, delete, and view patients on this dashboard page
   - Used tailwind css to desing the login, signup, dashboard page and profile page giving a nice user experience
   - Allow access to edit, delete, and add action based on roles
+
+- **[BE] Feature Added:** Docker and AWS deployment
+- **Details:**:
+  Docker Integration:
+  - Set up a Dockerfile to build and push the backend container image (isandeep4/patient-service-nest-prisma).
+  - Included steps to install dependencies and run Prisma migrations during build.
+    Elastic Beanstalk Deployment:
+    - Added Dockerrun.aws.json to deploy the Docker image to AWS Elastic Beanstalk.
+    - Created an Elastic Beanstalk environment to run the Docker container.
+    - Configured required environment variables:
+      DATABASE_URL (RDS PostgreSQL endpoint)
+      PORT (set to 8080)
+      Authentication Update:
+    - Switched JWT token storage from HttpOnly cookies to localStorage for frontend integration.
+      Frontend Integration:
+    - connected the Elastic Beanstalk API endpoint with the frontend application.

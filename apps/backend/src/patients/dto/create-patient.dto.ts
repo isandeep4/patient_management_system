@@ -1,4 +1,5 @@
-import { IsDateString, IsEmail, IsInt, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDate, IsEmail, IsInt, IsString } from "class-validator";
 
 export class CreatePatientDto {
   @IsInt()
@@ -11,6 +12,7 @@ export class CreatePatientDto {
   email: string;
   @IsString()
   phoneNumber: string;
-  @IsDateString()
-  dob: string;
+  @Type(() => Date)
+  @IsDate()
+  dob: Date;
 }

@@ -4,6 +4,7 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
   Post,
   Res,
 } from "@nestjs/common";
@@ -11,7 +12,6 @@ import { AuthService } from "./auth.service";
 import { SignInDto } from "./dto/sign-in.dto";
 import { Public } from "./decorators/public.decorator";
 import { Response } from "express";
-import { User } from "@prisma/client";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 
 @Controller("auth")
@@ -24,19 +24,20 @@ export class AuthController {
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) res: Response
   ) {
-    const { access_token, userDetails } = await this.authService.signin(
-      signInDto.userId,
-      signInDto.password
-    );
-    //set HTTP-only cookie
-    res.cookie("accessToken", access_token, {
-      httpOnly: true,
-      secure: false, // Use HTTPS in production
-      sameSite: "lax",
-      path: "/",
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    });
-    return res.status(201).json({ message: "logged in", user: userDetails });
+    try {
+      const { access_token, userDetails } = await this.authService.signin(
+        signInDto.userId,
+        signInDto.password
+      );
+      return {
+        message: "logged in",
+        user: userDetails,
+        accessToken: access_token,
+      };
+    } catch (error) {
+      console.error("Error during login:", error);
+      throw new InternalServerErrorException("Login failed.");
+    }
   }
   @Public()
   @Post("signup")
@@ -48,16 +49,18 @@ export class AuthController {
         throw new BadRequestException("Invalid user data");
       }
       //set HTTP-only cookie
-      res.cookie("accessToken", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        path: "/",
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      // res.cookie("accessToken", token, {
+      //   httpOnly: true,
+      //   sameSite: "none",
+      //   secure: true,
+      //   path: "/",
+      //   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      // });
+      return res.status(201).json({
+        message: "User registered successfully",
+        user,
+        accessToken: token,
       });
-      return res
-        .status(201)
-        .json({ message: "User registered successfully", user });
     } catch (error) {
       throw error;
     }
@@ -67,12 +70,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async singout(@Res() res: Response) {
     //clear cookie
-    res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: false, // Use HTTPS in production
-      sameSite: "lax",
-      path: "/",
-    });
+    // res.clearCookie("accessToken", {
+    //   httpOnly: true,
+    //   sameSite: "none",
+    //   secure: true,
+    //   path: "/",
+    // });
     return res.status(200).json({ message: "logged out" });
   }
 }

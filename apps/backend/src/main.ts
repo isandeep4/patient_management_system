@@ -12,6 +12,8 @@ async function bootstrap() {
     allowedHeaders: "Content-Type, Authorization",
     credentials: true, // if you need to send cookies or auth headers
   });
-  await app.listen(4000);
+  const port = parseInt(process.env.PORT, 10) || 8080;
+  await app.listen(port, "0.0.0.0");
+  console.log(`App is listening on port ${port}`);
 }
 bootstrap();

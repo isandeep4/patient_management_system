@@ -1,4 +1,3 @@
-import router from "next/router";
 import {
   SignupFormState,
   SignupFormSchema,
@@ -29,17 +28,21 @@ export async function signup(state: SignupFormState, formData: FormData) {
 
   // Call the create user API
   try {
-    const response = await fetch("http://localhost:4000/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, userName, password, roles }),
-      credentials: "include",
-    });
+    const response = await fetch(
+      "http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/auth/signup",
+      //"http://localhost:4000/auth/signup",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, userName, password, roles }),
+      }
+    );
     if (response.ok) {
       const userData = await response.json();
+      localStorage.setItem("accessToken", userData.accessToken);
       return {
         success: true,
-        user: userData,
+        user: userData.user,
       };
     }
   } catch (error) {
@@ -71,7 +74,9 @@ export async function login(state: SigninFormState, formData: FormData) {
   });
 
   if (response.status === 200) {
-    const { user } = await response.json();
+    const { user, accessToken } = await response.json();
+    localStorage.setItem("accessToken", accessToken);
+
     return {
       success: true,
       user: user,
