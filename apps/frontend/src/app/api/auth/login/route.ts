@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export async function POST(request: NextRequest) {
   try {
     const { userId, password } = await request.json();
-    const response = await fetch(
-      "http://eb-rds-nest-backend-server-env.eba-ku7j8aa9.us-east-1.elasticbeanstalk.com/auth/login",
-      //"http://localhost:4000/auth/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, password }),
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, password }),
+    });
     const data = await response.json();
     if (!response.ok) {
       return new NextResponse(JSON.stringify(data), {
