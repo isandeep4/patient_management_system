@@ -9,12 +9,6 @@ import { Role } from "src/enums/roles.enum";
 @Controller("users")
 export class UsersController {
   constructor(private usersService: UsersService) {}
-  @Public()
-  @Post()
-  @HttpCode(201)
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
-  }
 
   @Public()
   @Get(":userId")
