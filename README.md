@@ -15,15 +15,15 @@
 - The backend app is deployed to AWS Elastic Beanstalk with API gateway at the front.
   
 **Focus Area**:
-**User Experience (UX):**
-- The frontend app features clean layouts that are responsive and accessible, ensuring a smooth and consistent user experience across devices.
-- The signup form provides explicit instructions, guiding users to enter the correct information and helping prevent errors.
-- The dashboard offers intuitive forms for creating and editing patient records, while the profile page displays concise and organized user information for easy reference.
-**Security:**
-- The app implements secure user authentication using JWT-based sign-in, employing secrets to protect credentials during signup and login.
-- After successful authentication, users receive an access token (or secure cookie), which is included in subsequent requests to maintain a secure session.
-- Backend API endpoints are classified as public or private using decorators, with route guards in place to validate both the access token and the associated environment secret before granting access.
-- Role-based access control ensures that users can access only the routes and features authorized for their assigned role, enhancing both security and user-specific functionality.
+  **User Experience (UX):**
+  - The frontend app features clean layouts that are responsive and accessible, ensuring a smooth and consistent user experience across devices.
+  - The signup form provides explicit instructions, guiding users to enter the correct information and helping prevent errors.
+  - The dashboard offers intuitive forms for creating and editing patient records, while the profile page displays concise and organized user information for easy     reference.
+  **Security:**
+  - The app implements secure user authentication using JWT-based sign-in, employing secrets to protect credentials during signup and login.
+  - After successful authentication, users receive an access token (or secure cookie), which is included in subsequent requests to maintain a secure session.
+  - Backend API endpoints are classified as public or private using decorators, with route guards in place to validate both the access token and the associated environment secret before granting access.
+  - Role-based access control ensures that users can access only the routes and features authorized for their assigned role, enhancing both security and user-specific functionality.
   
 ***Pull Request Details:**** 
 - **[BE] Feature Added:** Create and fetch patient records
