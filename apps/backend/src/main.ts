@@ -9,7 +9,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       "http://localhost:3000",
-      "https://patient-management-system-1xbl-buir9jibp-isandeep4s-projects.vercel.app",
+      "https://patient-management-system-1xbl-f28kehf1j-isandeep4s-projects.vercel.app",
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
     allowedHeaders: "Content-Type, Authorization",
