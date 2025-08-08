@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PatientFormData } from "./patientModal";
 import PatientModal from "./patientModal";
 export interface Patient {
-  id: number;
+  id?: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -24,9 +23,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function PatientsListPage({ roles }: { roles: string[] }) {
   const [patients, setPatients] = useState<Patient[] | []>([]);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
-    initialPatient
-  );
+  const [selectedPatient, setSelectedPatient] =
+    useState<Patient>(initialPatient);
   const [modalOpen, setModalOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const isAdmin = roles.includes("admin");
@@ -54,42 +52,21 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
     }
   };
 
-  function openModal(patient: Patient) {
+  const openModal = (patient: Patient) => {
     setSelectedPatient(patient);
     setModalOpen(true);
-  }
-
-  function closeModal() {
-    setModalOpen(false);
-    setSelectedPatient(initialPatient);
-  }
-
-  const handleSave = async (updatedData: PatientFormData) => {
-    const method = selectedPatient ? "PUT" : "POST";
-    const url = selectedPatient
-      ? `${API_BASE_URL}/patients/${selectedPatient.id}`
-      : `${API_BASE_URL}/patients`;
-    try {
-      await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedData),
-      });
-      closeModal();
-      fetchPatients(); // Refresh list after save
-    } catch (error) {
-      console.error("Error saving patient:", error);
-    }
-
-    closeModal();
   };
-  async function handleAddPatient() {
-    setSelectedPatient(null);
+
+  const closeModal = () => {
+    setModalOpen(false);
+    fetchPatients();
+    setSelectedPatient(initialPatient);
+  };
+
+  const handleAddPatient = async () => {
+    setSelectedPatient(initialPatient);
     setModalOpen(true);
-  }
+  };
   const handleDelete = async (patient: Patient) => {
     try {
       await fetch(`${API_BASE_URL}/patients/${patient.id}`, {
@@ -155,7 +132,7 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
                     {patient.firstName + " " + patient.lastName}
                   </th>
                   <td className="px-6 py-4">{patient.email}</td>
-                  <td className="px-6 py-4">{patient.dob}</td>
+                  <td className="px-6 py-4">{patient.dob.split("T")[0]}</td>
                   <td className="px-6 py-4">{patient.phoneNumber}</td>
                   {isAdmin && (
                     <td className="px-6 py-4">
@@ -182,9 +159,9 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
         </table>
         <PatientModal
           patient={selectedPatient}
+          setSelectedPatient={setSelectedPatient}
           isOpen={modalOpen}
           onClose={closeModal}
-          onSave={handleSave}
         />
       </div>
     </main>
