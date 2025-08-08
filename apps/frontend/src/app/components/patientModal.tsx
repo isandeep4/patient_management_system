@@ -1,11 +1,20 @@
-import { useState, useEffect } from "react";
-import { initialPatient, Patient } from "./patientListPage";
+import {
+  useState,
+  useEffect,
+  useActionState,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import { Patient } from "./patientListPage";
+import { savePatient } from "../actions/savePateint";
+import { InputField } from "./InputField";
+import { PatientFormState } from "../lib/definitions";
 
 interface EditPatientModalProps {
   patient: Patient | null;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (formdata: PatientFormData) => void;
+  setSelectedPatient: Dispatch<SetStateAction<Patient>>;
 }
 export interface PatientFormData {
   firstName: string;
@@ -14,58 +23,43 @@ export interface PatientFormData {
   phoneNumber: string;
   dob: string;
 }
-
-interface InputFieldProps {
-  label: string;
-  id: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: string;
-  placeholder: string;
-  required: boolean;
-}
+const initialState: PatientFormState = {
+  errors: undefined,
+  message: undefined,
+  success: false,
+};
 
 export default function PatientModal({
   patient,
   isOpen,
   onClose,
-  onSave,
+  setSelectedPatient,
 }: EditPatientModalProps) {
-  // Local state for form fields, initialized from `user` prop
-  const [formData, setFormData] = useState<PatientFormData>(initialPatient);
+  const [token, setToken] = useState<string | null>(null);
+  const [state, action, error] = useActionState(
+    async (prevState: PatientFormState, payload: FormData | null) => {
+      if (payload === null) {
+        return initialState;
+      }
+      return await savePatient(prevState, payload);
+    },
+    initialState
+  );
 
-  // When `user` prop changes (e.g. opening modal with different user), update form fields
   useEffect(() => {
-    if (patient) {
-      setFormData({
-        firstName: patient.firstName || "",
-        lastName: patient.lastName || "",
-        email: patient.email || "",
-        phoneNumber: patient.phoneNumber || "",
-        dob: patient.dob || "",
-      });
-    } else {
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        dob: "",
-      });
+    setToken(localStorage.getItem("accessToken"));
+  }, []);
+  useEffect(() => {
+    if (state?.success) {
+      onClose();
     }
-  }, [patient]);
+  }, [state]);
 
   if (!isOpen) return null; // Do not render modal if closed
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.currentTarget;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }
-
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    onSave(formData!); // Call parent handler with form data
+    setSelectedPatient((prev) => ({ ...prev, [name]: value }));
   }
   const modalTitle = patient ? "Edit Patient" : "Add Patient";
 
@@ -76,7 +70,7 @@ export default function PatientModal({
     >
       <div className="relative w-full max-w-2xl max-h-full">
         <form
-          onSubmit={handleSubmit}
+          action={action}
           className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700"
         >
           {/* Modal header */}
@@ -86,7 +80,9 @@ export default function PatientModal({
             </h3>
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                onClose(), action(null);
+              }}
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             >
               <svg
@@ -115,49 +111,58 @@ export default function PatientModal({
                 label="First Name"
                 id="firstName"
                 name="firstName"
-                value={formData!.firstName}
+                value={patient?.firstName ?? ""}
                 onChange={handleChange}
                 placeholder="Bonnie"
                 required
+                errors={state?.errors?.firstName}
               />
+
               <InputField
                 label="Last Name"
                 id="lastName"
                 name="lastName"
-                value={formData!.lastName}
+                value={patient?.lastName ?? ""}
                 onChange={handleChange}
                 placeholder="Green"
                 required
+                errors={state?.errors?.lastName}
               />
               <InputField
                 label="Email"
                 type="email"
                 id="email"
                 name="email"
-                value={formData!.email}
+                value={patient?.email ?? ""}
                 onChange={handleChange}
                 placeholder="example@company.com"
                 required
+                errors={state?.errors?.email}
               />
               <InputField
                 label="Phone Number"
                 type="tel"
                 id="phoneNumber"
                 name="phoneNumber"
-                value={formData!.phoneNumber}
+                value={patient?.phoneNumber ?? ""}
                 onChange={handleChange}
                 placeholder="+(12)3456 789"
                 required
+                errors={state?.errors?.phoneNumber}
               />
+
               <InputField
                 label="Date of birth"
                 id="dob"
                 name="dob"
-                value={formData!.dob}
+                value={patient?.dob.split("T")[0] ?? ""}
                 onChange={handleChange}
                 placeholder="Date of birth"
                 required
+                errors={state?.errors?.dob}
               />
+              <input type="hidden" name="token" value={token || ""} />
+              <input type="hidden" name="id" defaultValue={patient?.id || ""} />
             </div>
           </div>
 
@@ -172,38 +177,6 @@ export default function PatientModal({
           </div>
         </form>
       </div>
-    </div>
-  );
-}
-
-function InputField({
-  label,
-  id,
-  name,
-  value,
-  onChange,
-  type = "text",
-  placeholder,
-  required,
-}: InputFieldProps) {
-  return (
-    <div className="col-span-6 sm:col-span-3">
-      <label
-        htmlFor={id}
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >
-        {label}
-      </label>
-      <input
-        type={type}
-        name={name}
-        id={id}
-        className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        required={required}
-      />
     </div>
   );
 }
