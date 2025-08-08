@@ -64,25 +64,31 @@ export async function login(state: SigninFormState, formData: FormData) {
     };
   }
   const { userId, password } = validatedFields.data;
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, password }),
+    });
 
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, password }),
-  });
-
-  if (response.status === 200) {
-    const { user, accessToken } = await response.json();
-    localStorage.setItem("accessToken", accessToken);
-
-    return {
-      success: true,
-      user: user,
-    };
-  } else {
+    if (response.ok) {
+      const { user, accessToken } = await response.json();
+      return {
+        success: true,
+        user: user,
+        accessToken: accessToken,
+      };
+    } else {
+      return {
+        success: false,
+        messages: "You don't have an account.",
+      };
+    }
+  } catch (error) {
+    console.log("Login error:", error);
     return {
       success: false,
-      messages: "You don't have an account.",
+      messages: "internal server error",
     };
   }
 }
