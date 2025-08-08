@@ -21,6 +21,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (state?.success) {
       setUser(state.user);
+      localStorage.setItem("accessToken", state.accessToken);
       router.push(`/dashboard`);
     }
   }, [state, router]);
