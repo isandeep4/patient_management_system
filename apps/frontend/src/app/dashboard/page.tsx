@@ -8,7 +8,7 @@ export default function DashboardPage() {
   const { user } = useUser();
 
   if (!user) {
-    return <div>Loading...</div>; // Fallback if user is null initially
+    return <div>You are not logged in.</div>;
   }
 
   return <PatientsListPage roles={user?.roles ?? []} />;
