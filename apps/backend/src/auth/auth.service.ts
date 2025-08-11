@@ -18,15 +18,19 @@ export class AuthService {
   async signin(userid: string, password: string) {
     const user = await this.usersService.findById(userid);
     if (!user) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw new UnauthorizedException("User doesn't exist");
     }
     if (user?.password !== password) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("Invalid credentials");
     }
     const payload = { sub: user.userId, roles: user.roles };
     return {
       access_token: await this.jwtService.signAsync(payload),
-      userDetails: user,
+      userDetails: {
+        userId: user.userId,
+        roles: user.roles,
+        userName: user.userName,
+      },
     };
   }
   async signup(
