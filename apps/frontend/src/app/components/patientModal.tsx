@@ -35,7 +35,6 @@ export default function PatientModal({
   onClose,
   setSelectedPatient,
 }: EditPatientModalProps) {
-  const [token, setToken] = useState<string | null>(null);
   const [state, action, error] = useActionState(
     async (prevState: PatientFormState, payload: FormData | null) => {
       if (payload === null) {
@@ -46,9 +45,6 @@ export default function PatientModal({
     initialState
   );
 
-  useEffect(() => {
-    setToken(localStorage.getItem("accessToken"));
-  }, []);
   useEffect(() => {
     if (state?.success) {
       onClose();
@@ -161,7 +157,6 @@ export default function PatientModal({
                 required
                 errors={state?.errors?.dob}
               />
-              <input type="hidden" name="token" value={token || ""} />
               <input type="hidden" name="id" defaultValue={patient?.id || ""} />
             </div>
           </div>

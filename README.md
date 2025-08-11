@@ -74,7 +74,5 @@
     - Configured required environment variables:
       DATABASE_URL (RDS PostgreSQL endpoint)
       PORT (set to 8080)
-      Authentication Update:
-    - Switched JWT token storage from HttpOnly cookies to localStorage for frontend integration.
       Frontend Integration:
     - connected the Elastic Beanstalk API endpoint with the frontend application.
