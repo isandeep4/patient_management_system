@@ -35,10 +35,9 @@ export class AuthController {
       res.cookie("accessToken", access_token, {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 15 * 60 * 1000, // 15 minutes
         path: "/",
-        domain: "https://patient-management-system-1xbl.vercel.app",
       });
       // return res.send({
       //   message: "logged in",
@@ -72,11 +71,10 @@ export class AuthController {
       //set HTTP-only cookie
       res.cookie("accessToken", token, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         secure: true,
         path: "/",
         maxAge: 15 * 60 * 1000,
-        domain: "https://patient-management-system-1xbl.vercel.app",
       });
       return res.send({
         message: "User registered successfully",
