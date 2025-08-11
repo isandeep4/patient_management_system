@@ -7,10 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
   app.enableCors({
-    origin: "https://patient-management-system-1xbl.vercel.app",
+    origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-    credentials: true,
+    allowedHeaders: "Content-Type, Authorization",
+    credentials: true, // if you need to send cookies or auth headers
   });
   const port = parseInt(process.env.PORT, 10) || 8080;
   await app.listen(port, "0.0.0.0");

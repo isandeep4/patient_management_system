@@ -21,26 +21,28 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const accessToken = request.cookies["accessToken"];
-    if (!accessToken) {
-      throw new Error("missing token");
+    // const accessToken = request.cookies["accessToken"];
+    // if (!accessToken) {
+    //   throw new Error("missing token");
+    // }
+    const token = this.extractTokenFromHeader(request);
+    if (!token) {
+      throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(accessToken, {
+      const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
       });
       request["user"] = payload;
     } catch {
-      throw new UnauthorizedException("verification unsuccessful");
+      throw new UnauthorizedException();
     }
     return true;
   }
-  // private extractTokenFromHeader(request: Request): string | undefined {
-  //   const authHeader = request.headers.authorization;
-  //   console.log("authHeader", authHeader);
-  //   if (!authHeader) return undefined;
-  //   const [type, token] = request.headers.authorization?.split(" ") ?? [];
-  //   console.log("token", token);
-  //   return type === "Bearer" ? token : undefined;
-  // }
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const authHeader = request.headers.authorization;
+    if (!authHeader) return undefined;
+    const [type, token] = request.headers.authorization?.split(" ") ?? [];
+    return type === "Bearer" ? token : undefined;
+  }
 }

@@ -21,11 +21,7 @@ export default function DashboardLayout({
   };
 
   const handleLogout = async () => {
-    // localStorage.removeItem("accessToken");
-    await fetch(`${API_BASE_URL}/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
+    localStorage.removeItem("accessToken");
     router.push("/login");
   };
 

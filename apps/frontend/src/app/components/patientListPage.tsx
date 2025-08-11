@@ -26,23 +26,22 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
   const [selectedPatient, setSelectedPatient] =
     useState<Patient>(initialPatient);
   const [modalOpen, setModalOpen] = useState(false);
-  // const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const isAdmin = roles.includes("admin");
 
-  // useEffect(() => {
-  //   setToken(localStorage.getItem("accessToken"));
-  // }, []);
+  useEffect(() => {
+    setToken(localStorage.getItem("accessToken"));
+  }, []);
 
   useEffect(() => {
-    //if (token)
-    fetchPatients();
-  }, []);
+    if (token) fetchPatients();
+  }, [token]);
 
   const fetchPatients = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/patients`, {
-        credentials: "include",
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -74,7 +73,7 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          credentials: "include",
+          Authorization: `Bearer ${token}`,
         },
       });
       fetchPatients();

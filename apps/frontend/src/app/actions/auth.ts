@@ -34,10 +34,10 @@ export async function signup(state: SignupFormState, formData: FormData) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, userName, password, roles }),
-      credentials: "include",
     });
     if (response.ok) {
       const userData = await response.json();
+      localStorage.setItem("accessToken", userData.accessToken);
       return {
         success: true,
         user: userData.user,
@@ -68,26 +68,27 @@ export async function login(state: SigninFormState, formData: FormData) {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify({ userId, password }),
     });
-    const data = await response.json().catch(() => ({}));
+
     if (response.ok) {
+      const { user, accessToken } = await response.json();
       return {
         success: true,
-        user: data.user,
+        user: user,
+        accessToken: accessToken,
       };
     } else {
       return {
         success: false,
-        messages: data.message || "Login Failed.",
+        messages: "You don't have an account.",
       };
     }
   } catch (error) {
     console.log("Login error:", error);
     return {
       success: false,
-      messages: "Unable to connect to server. Please try again.",
+      messages: "internal server error",
     };
   }
 }
