@@ -26,15 +26,9 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
   const [selectedPatient, setSelectedPatient] =
     useState<Patient>(initialPatient);
   const [modalOpen, setModalOpen] = useState(false);
-  // const [token, setToken] = useState<string | null>(null);
   const isAdmin = roles.includes("admin");
 
-  // useEffect(() => {
-  //   setToken(localStorage.getItem("accessToken"));
-  // }, []);
-
   useEffect(() => {
-    //if (token)
     fetchPatients();
   }, []);
 

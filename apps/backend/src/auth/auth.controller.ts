@@ -39,12 +39,6 @@ export class AuthController {
         maxAge: 15 * 60 * 1000, // 15 minutes
         path: "/",
       });
-      // return res.send({
-      //   message: "logged in",
-      //   // userId: userDetails.userId,
-      //   // userName: userDetails.userNmae,
-      //   // roles: userDetails.roles,
-      // });
       return {
         message: "logged in",
         user: userDetails,

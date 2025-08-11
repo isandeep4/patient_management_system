@@ -4,7 +4,6 @@ import { PatientFormSchema, PatientFormState } from "../lib/definitions";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export async function savePatient(state: PatientFormState, formData: FormData) {
   const id = formData.get("id");
-  // const token = formData.get("token");
 
   // Validate form fields
   const validatedFields = PatientFormSchema.safeParse({
@@ -33,7 +32,6 @@ export async function savePatient(state: PatientFormState, formData: FormData) {
       method: method,
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${token}`,
       },
       credentials: "include",
       body: JSON.stringify({
