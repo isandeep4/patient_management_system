@@ -66,9 +66,9 @@ export default function PatientsListPage({ roles }: { roles: string[] }) {
     try {
       await fetch(`${API_BASE_URL}/patients/${patient.id}`, {
         method: "DELETE",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          credentials: "include",
         },
       });
       fetchPatients();
